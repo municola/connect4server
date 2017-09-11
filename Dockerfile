@@ -11,7 +11,4 @@ RUN npm install -q
 # Bundle app source
 COPY . /usr/src/app
 ENV NODE_ENV production
-RUN npm start
-
-FROM nginx:latest
-COPY --from=0 /usr/src/app/dist/ /usr/share/nginx/html/
+CMD ["npm", "start"]
