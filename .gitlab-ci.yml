@@ -1,0 +1,8 @@
+build-container:
+  type: build
+  image: docker:17.05
+  script:
+    - docker build -t docker.dolansoft.org/nicolas/SpecialConnectFourServer:${CI_COMMIT_TAG:-$CI_COMMIT_SHA} .
+    - docker push docker.dolansoft.org/nicolas/SpecialConnectFourServer:${CI_COMMIT_TAG:-$CI_COMMIT_SHA}
+  tags:
+    - docker-17-05
