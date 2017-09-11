@@ -1,5 +1,4 @@
 const io = require('socket.io')(3000, {
-  path: '/',
   serveClient: false,
   // below are engine.IO options
   pingInterval: 10000,
