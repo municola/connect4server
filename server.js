@@ -17,20 +17,22 @@ function howManyPeople(arr) {
 
 io.on('connection', (socket) => {
   socket.on('connectMe', (username) => {
+    console.log('asdfh');
+    socket.nickname = username;
     members.push([socket.id, username]);
+
     socket.emit('connected');
     socket.emit('update', howManyPeople(howMany));
-
     socket.emit('updateMembers', members);
-    socket.broadcast.emit('updateMembers', members);
 
+    socket.broadcast.emit('updateMembers', members);
     socket.broadcast.emit('newUser', 2, username);
   });
-  socket.on('send', (message, username) => {
+  socket.on('sendMessage', (message, username) => {
     socket.broadcast.emit('newMessage', 1, username, message);
     socket.emit('newMessage', 0, username, message);
   });
-  socket.on('gameMessage', (roomId, message, username) => {
+  socket.on('sendGameMessage', (roomId, message, username) => {
     socket.emit('newGameMessage', 0, username, message);
     socket.to(roomId).emit('newGameMessage', 1, username, message);
   });
@@ -41,28 +43,21 @@ io.on('connection', (socket) => {
       howMany[roomId].push(socket.id);
 
       socket.to(roomId).emit('playerJoined', 2, username);
+      socket.to(roomId).emit('ready', 'O', 'Enemy Turn', false);
 
-      socket.emit('confirmed', roomId);
-      socket.emit('ready', 'X', 'Your Turn');
-      socket.to(roomId).emit('ready', 'O', 'Enemy Turn');
+      socket.emit('subscribed', howManyPeople(howMany), roomId);
+      socket.emit('ready', 'X', 'YourTurn', true);
 
-      socket.to(roomId).emit('enemyName', username);
-
-      socket.emit('firstTurn');
-      socket.emit('update', howManyPeople(howMany));
       socket.broadcast.emit('update', howManyPeople(howMany));
     }
     if (people[roomId] === 0) {
       socket.join(roomId);
       howMany[roomId].push(socket.id);
 
-      socket.emit('confirmed', roomId);
-      socket.emit('update', howManyPeople(howMany));
+      socket.emit('subscribed', howManyPeople(howMany), roomId);
+
       socket.broadcast.emit('update', howManyPeople(howMany));
     }
-  });
-  socket.on('enemyName', (roomId, name) => {
-    socket.to(roomId).emit('enemyName', name);
   });
   socket.on('turn', (table) => {
     socket.to(socket.rooms[Object.keys(socket.rooms)[0]]).emit('turn', table);
