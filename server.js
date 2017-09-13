@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
 
       socket.emit('subscribed', howManyPeople(howMany), roomId);
       socket.emit('ready', 'X', 'YourTurn', true);
+      console.log('ready');
 
       socket.broadcast.emit('update', howManyPeople(howMany));
     }
