@@ -99,8 +99,10 @@ io.on('connection', (socket) => {
     members = members.filter((item) => {
       return item[0] !== socket.id;
     });
-    socket.broadcast.emit('userLeft', 2, username);
-    socket.broadcast.emit('update', howManyPeople(howMany));
-    socket.broadcast.emit('updateMembers', members);
+    if (username !== '' && username !== null && username !== undefined) {
+      socket.broadcast.emit('userLeft', 2, username);
+      socket.broadcast.emit('update', howManyPeople(howMany));
+      socket.broadcast.emit('updateMembers', members);
+    }
   });
 });
